@@ -169,11 +169,11 @@ $userCount = $result->num_rows;
                 <div class="container-fluid">
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <h1 class="h3 mb-0 text-gray-800">User Collection List</h1>
                     </div>
                     <div class="container">
                         <div class="py-2">
-                            <a class="btn btn-primary" href="users.php"><i class="fa-solid fa-arrow-left fa-fw"></i></a>
+                            <a class="btn btn-warning" href="users.php"><i class="fa-solid fa-arrow-left fa-fw"></i></a>
                         </div>
                         <?php if ($userCount > 0): ?>
                             <div class="row g-3">

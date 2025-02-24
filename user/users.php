@@ -26,6 +26,12 @@ if (isset($_GET["q"])) {
         case 4:
             $orderClause = "ORDER BY name DESC";
             break;
+        case 5:
+            $orderClause = "ORDER BY account ASC";
+            break;
+        case 6:
+            $orderClause = "ORDER BY account DESC";
+            break;
     }
 
     $perPage = 10;
@@ -110,7 +116,7 @@ if (isset($_GET["q"])) {
 
         .pagination .active .page-link {
             background-color: rgb(219, 161, 16);
-            border-color:rgb(219, 161, 16);
+            border-color: rgb(219, 161, 16);
         }
     </style>
 </head>
@@ -281,8 +287,8 @@ if (isset($_GET["q"])) {
                                                         id
                                                     </div>
                                                     <div class="col-3 list-btn">
-                                                        <a href="users.php?p=<?= $p ?>&order=1" class="d-flex btn p-0 <?php if ($order == 1) echo "active" ?>"><i class="fa-solid fa-caret-up "></i></a>
-                                                        <a href="users.php?p=<?= $p ?>&order=2" class="d-flex btn p-0 m-0 <?php if ($order == 2) echo "active" ?>"><i class="fa-solid fa-caret-down "></i></a>
+                                                        <a href="users.php?p=<?= $p ?>&order=2" class="d-flex btn p-0 <?php if ($order == 2) echo "active" ?>"><i class="fa-solid fa-caret-up "></i></a>
+                                                        <a href="users.php?p=<?= $p ?>&order=1" class="d-flex btn p-0 m-0 <?php if ($order == 1) echo "active" ?>"><i class="fa-solid fa-caret-down "></i></a>
                                                     </div>
                                                 </div>
                                             </th>
@@ -292,13 +298,21 @@ if (isset($_GET["q"])) {
                                                         name
                                                     </div>
                                                     <div class="col-3 list-btn">
-                                                        <a href="users.php?p=<?= $p ?>&order=3" class="d-flex btn p-0 <?php if ($order == 3) echo "active" ?>"><i class="fa-solid fa-caret-up "></i></a>
-                                                        <a href="users.php?p=<?= $p ?>&order=4" class="d-flex btn p-0 m-0 <?php if ($order == 4) echo "active" ?>"><i class="fa-solid fa-caret-down "></i></a>
+                                                        <a href="users.php?p=<?= $p ?>&order=4" class="d-flex btn p-0 <?php if ($order == 4) echo "active" ?>"><i class="fa-solid fa-caret-up "></i></a>
+                                                        <a href="users.php?p=<?= $p ?>&order=3" class="d-flex btn p-0 m-0 <?php if ($order == 3) echo "active" ?>"><i class="fa-solid fa-caret-down "></i></a>
                                                     </div>
                                                 </div>
                                             </th>
                                             <th class="align-middle">
-                                                account
+                                                <div class="row g-0">
+                                                    <div class="d-flex align-items-center col-9">
+                                                        account
+                                                    </div>
+                                                    <div class="col-3 list-btn">
+                                                        <a href="users.php?p=<?= $p ?>&order=6" class="d-flex btn p-0 <?php if ($order == 6) echo "active" ?>"><i class="fa-solid fa-caret-up "></i></a>
+                                                        <a href="users.php?p=<?= $p ?>&order=5" class="d-flex btn p-0 m-0 <?php if ($order == 5) echo "active" ?>"><i class="fa-solid fa-caret-down "></i></a>
+                                                    </div>
+                                                </div>
                                             </th>
                                             <th class="align-middle">phone</th>
                                             <th class="align-middle">email</th>
@@ -310,7 +324,7 @@ if (isset($_GET["q"])) {
                                             <tr>
                                                 <td class="align-middle"><?= $row["id"] ?></td>
                                                 <td class="align-middle"><?= $row["name"] ?></td>
-                                                <td class="align-middle"><?= $row["account"] ?></td> 
+                                                <td class="align-middle"><?= $row["account"] ?></td>
                                                 <td class="align-middle"><?= $row["phone"] ?></td>
                                                 <td class="align-middle"><?= $row["email"] ?></td>
                                                 <td class="align-middle">
