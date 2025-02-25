@@ -6,18 +6,17 @@ if (!isset($_POST["account"])) {
     die("請循正常管道進入此頁");
 }
 
-$account = $_POST["account"];
-$password = $_POST["password"];
+$name = $_POST['name'];
+$gender_id = $_POST['gender_id'];
+$account = $_POST['account'];
+$password = $_POST['password'];
 $repassword = $_POST["repassword"];
-$email = $_POST["email"];
-
-$patternAccount = "/^.{4,12}$/";
+$email = $_POST['email'];
+$phone = $_POST['phone'];
+$birth_date = $_POST['birth_date'];
 
 // echo strlen($account);
-// if (strlen($account) < 4 || strlen($account) > 20) {
-//     die("請輸入4~20字元的帳號");
-// }
-if (!preg_match($patternAccount, $account)) {
+if (strlen($account) < 4 || strlen($account) > 20) {
     die("請輸入4~20字元的帳號");
 }
 
@@ -40,8 +39,8 @@ if ($password != $repassword) {
 $password = md5($password);
 
 $now = date("Y-m-d H:i:s");
-$sql = "INSERT INTO users (account, password, email, created_at, valid)
-	VALUES ('$account', '$password', '$email', '$now', 1)";
+$sql = "INSERT INTO users (name, gender_id, account, password, email, phone, birth_date, created_at, valid)
+	VALUES ('$name', '$gender_id', '$account', 'password', '$email', '$phone', '$birth_date', '$now', 1)";
 
 if ($conn->query($sql) === TRUE) {
 } else {

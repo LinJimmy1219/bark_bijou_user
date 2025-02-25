@@ -1,13 +1,20 @@
 <?php
 require_once("../db_connect_bark_bijou.php");
 
-$sqlAll = "SELECT * FROM users WHERE valid=1";
+$sqlAll = "SELECT users.*, COALESCE(gender.name, '未填寫') AS gender_name 
+           FROM users
+           LEFT JOIN gender ON users.gender_id = gender.id
+           WHERE users.valid = 1";
 $resultAll = $conn->query($sqlAll);
 $userCount = $resultAll->num_rows;
 
+
 if (isset($_GET["q"])) {
     $q = $_GET["q"];
-    $sql = "SELECT * FROM users WHERE name LIKE '%$q%'";
+    $sql = "SELECT users.*, COALESCE(gender.name, '未填寫') AS gender_name 
+            FROM users 
+            LEFT JOIN gender ON users.gender_id = gender.id 
+            WHERE users.name LIKE '%$q%' AND users.valid = 1";
 } else if (isset($_GET["p"]) && isset($_GET["order"])) {
     $p = $_GET["p"];
     $order = $_GET["order"];
@@ -15,29 +22,34 @@ if (isset($_GET["q"])) {
     $orderClause = "";
     switch ($order) {
         case 1:
-            $orderClause = "ORDER BY id ASC";
+            $orderClause = "ORDER BY users.id ASC";
             break;
         case 2:
-            $orderClause = "ORDER BY id DESC";
+            $orderClause = "ORDER BY users.id DESC";
             break;
         case 3:
-            $orderClause = "ORDER BY name ASC";
+            $orderClause = "ORDER BY users.name ASC";
             break;
         case 4:
-            $orderClause = "ORDER BY name DESC";
+            $orderClause = "ORDER BY users.name DESC";
             break;
         case 5:
-            $orderClause = "ORDER BY account ASC";
+            $orderClause = "ORDER BY users.account ASC";
             break;
         case 6:
-            $orderClause = "ORDER BY account DESC";
+            $orderClause = "ORDER BY users.account DESC";
             break;
     }
 
-    $perPage = 10;
+    $perPage = 6;
     $startItem = ($p - 1) * $perPage;
     $totalPage = ceil($userCount / $perPage);
-    $sql = "SELECT * FROM users WHERE valid=1 $orderClause LIMIT $startItem, $perPage";
+
+    $sql = "SELECT users.*, COALESCE(gender.name, '未填寫') AS gender_name 
+            FROM users 
+            LEFT JOIN gender ON users.gender_id = gender.id 
+            WHERE users.valid=1 $orderClause 
+            LIMIT $startItem, $perPage";
 } else {
     header("location: users.php?p=1&order=1");
 }
@@ -62,12 +74,7 @@ if (isset($_GET["q"])) {
     <meta name="description" content="">
     <meta name="author" content="">
     <?php include("../css.php") ?>
-
     <style>
-        .primary {
-            background-color: rgba(245, 160, 23, 0.919);
-        }
-
         .list-btn a {
             background-color: transparent;
             color: #ffc107;
@@ -265,11 +272,6 @@ if (isset($_GET["q"])) {
                                     <form action="" method="get">
                                         <div class="input-group">
                                             <input type="search" class="form-control" name="q" <?php $q = "";
-                                                                                                // if (isset($_GET["q"])) {
-                                                                                                // $q = $_GET["q"];
-                                                                                                // }
-                                                                                                // $q=(isset($_GET["q"]))?
-                                                                                                // $_GET["q"] : "";
                                                                                                 $q = $_GET["q"] ?? ""; ?>
                                                 value="<?= $q ?>">
                                             <button class="btn btn-warning"><i class="fa-solid fa-magnifying-glass fa-fw" type="submit"></i></button>
@@ -278,7 +280,7 @@ if (isset($_GET["q"])) {
                                 </div>
                             </div>
                             <?php if ($userCount > 0): ?>
-                                <table class="table table-bordered">
+                                <table class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th class="align-middle">
@@ -306,6 +308,13 @@ if (isset($_GET["q"])) {
                                             <th class="align-middle">
                                                 <div class="row g-0">
                                                     <div class="d-flex align-items-center col-9">
+                                                        gender
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="align-middle">
+                                                <div class="row g-0">
+                                                    <div class="d-flex align-items-center col-9">
                                                         account
                                                     </div>
                                                     <div class="col-3 list-btn">
@@ -324,12 +333,13 @@ if (isset($_GET["q"])) {
                                             <tr>
                                                 <td class="align-middle"><?= $row["id"] ?></td>
                                                 <td class="align-middle"><?= $row["name"] ?></td>
+                                                <td class="align-middle"><?= $row["gender_name"] ?></td>
                                                 <td class="align-middle"><?= $row["account"] ?></td>
                                                 <td class="align-middle"><?= $row["phone"] ?></td>
                                                 <td class="align-middle"><?= $row["email"] ?></td>
                                                 <td class="align-middle">
-                                                    <a class="btn btn-warning" href="user.php?id=<?= $row["id"] ?>"><i class="fa-regular fa-eye"></i></a>
                                                     <a class="btn btn-warning" href="user-edit.php?id=<?= $row["id"] ?>"><i class="fa-solid fa-fw fa-pen"></i></a>
+                                                    <a class="btn btn-warning" href="user-collection.php?id=<?= $row["id"] ?>"><i class="fa-regular fa-eye"></i></a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -337,15 +347,45 @@ if (isset($_GET["q"])) {
                                 </table>
 
                                 <?php if (isset($_GET["p"])): ?>
-                                    <div>
-                                        <nav aria-label="">
-                                            <ul class="pagination">
-                                                <?php for ($i = 1; $i <= $totalPage; $i++): ?>
-                                                    <?php
-                                                    $active = ($i == $_GET["p"]) ? "active" : "";
-                                                    ?>
-                                                    <li class="page-item <?= $active ?>"><a class="page-link" href="users.php?p=<?= $i ?>&order=<?= $order ?>"><?= $i ?></a></li>
-                                                <?php endfor; ?>
+                                    <div class="d-flex justify-content-center">
+                                        <nav aria-label="Page navigation">
+                                            <ul class="pagination my-3">
+                                                <!-- 上一頁 -->
+                                                <li class="page-item <?= ($_GET["p"] > 1) ? '' : 'disabled' ?>">
+                                                    <a class="page-link" href="users.php?p=<?= max(1, $_GET["p"] - 1) ?>&order=<?= $order ?>" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                </li>
+                                                <!-- 第一頁 -->
+                                                <li class="page-item <?= (1 == $_GET["p"]) ? "active" : "" ?>">
+                                                    <a class="page-link" href="users.php?p=1&order=<?= $order ?>">1</a>
+                                                </li>
+                                                <!-- 省略符號 -->
+                                                <?php if ($_GET["p"] > 4): ?>
+                                                    <li class="page-item disabled"><span class="page-link bg-warning text-white">...</span></li>
+                                                <?php endif; ?>
+                                                <!-- 搜尋框（輸入頁碼跳轉） -->
+                                                <li class="page-item mx-3">
+                                                    <form action="users.php" method="GET" class="d-flex">
+                                                        <input type="hidden" name="order" value="<?= $order ?>">
+                                                        <input type="number" name="p" class="form-control rounded-0 p-0 text-warning fw-bold" min="1" max="<?= $totalPage ?>" value="<?= $_GET["p"] ?>" style="width: 70px; text-align: center;">
+                                                        <button type="submit" class="btn bg-white text-warning btn-sm rounded-0 fw-bold fs-6">Go</button>
+                                                    </form>
+                                                </li>
+                                                <!-- 省略符號 -->
+                                                <?php if ($_GET["p"] < $totalPage - 3): ?>
+                                                    <li class="page-item disabled"><span class="page-link bg-warning text-white">...</span></li>
+                                                <?php endif; ?>
+                                                <!-- 最後一頁 -->
+                                                <li class="page-item <?= ($totalPage == $_GET["p"]) ? "active" : "" ?>">
+                                                    <a class="page-link" href="users.php?p=<?= $totalPage ?>&order=<?= $order ?>"><?= $totalPage ?></a>
+                                                </li>
+                                                <!-- 下一頁 -->
+                                                <li class="page-item <?= ($_GET["p"] < $totalPage) ? '' : 'disabled' ?>">
+                                                    <a class="page-link" href="users.php?p=<?= min($totalPage, $_GET["p"] + 1) ?>&order=<?= $order ?>" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </nav>
                                     </div>

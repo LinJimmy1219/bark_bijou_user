@@ -35,15 +35,7 @@ $userCount = $result->num_rows;
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-   
     <?php include("../css.php") ?>
-    
-    <style>
-        .primary {
-            background-color: rgba(245, 160, 23, 0.919);
-        }
-    </style>
-
 </head>
 
 <body id="page-top">
@@ -122,7 +114,7 @@ $userCount = $result->num_rows;
                                             placeholder="Search for..." aria-label="Search"
                                             aria-describedby="basic-addon2">
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
+                                            <button class="btn btn-warning" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
                                         </div>
@@ -169,9 +161,9 @@ $userCount = $result->num_rows;
                 <div class="container-fluid">
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">User Collection List</h1>
+                        <h1 class="h3 mb-0 text-gray-800">會員收藏列表</h1>
                     </div>
-                    <div class="container">
+                    <div class="container-fluid">
                         <div class="py-2">
                             <a class="btn btn-warning" href="users.php"><i class="fa-solid fa-arrow-left fa-fw"></i></a>
                         </div>
@@ -201,7 +193,7 @@ $userCount = $result->num_rows;
                                         </tr>
                                     </table>
                                     <div class="">
-                                        <a href="user-edit.php?id=<?= $row["id"] ?>" class="btn btn-primary"><i class="fa-solid fa-pen fa-solid fa-fw"></i></a>
+                                        <a href="user-edit.php?id=<?= $row["id"] ?>" class="btn btn-warning"><i class="fa-solid fa-pen fa-solid fa-fw"></i></a>
                                     </div>
                                 </div>
                                 <div class="col-lg-8 col-md-12">
