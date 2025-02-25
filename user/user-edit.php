@@ -183,7 +183,7 @@ $userCount = $result->num_rows;
                         <div class="py-2">
                             <a class="btn btn-primary" href="users.php?id=<?= $row["id"] ?>"><i class="fa-solid fa-arrow-left fa-fw"></i></a>
                         </div>
-                        <div class="row">
+                        <div class="row justify-content-center">
                             <div class="col-lg-4 col-md-9">
                                 <?php if ($userCount > 0): ?>
                                     <form action="doUpdateUser.php" method="post">

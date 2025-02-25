@@ -161,7 +161,7 @@ $userCount = $result->num_rows;
                 <div class="container-fluid">
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">會員收藏列表</h1>
+                        <h1 class="h3 mb-0 text-gray-800">會員資料</h1>
                     </div>
                     <div class="container-fluid">
                         <div class="py-2">
@@ -195,20 +195,6 @@ $userCount = $result->num_rows;
                                     <div class="">
                                         <a href="user-edit.php?id=<?= $row["id"] ?>" class="btn btn-warning"><i class="fa-solid fa-pen fa-solid fa-fw"></i></a>
                                     </div>
-                                </div>
-                                <div class="col-lg-8 col-md-12">
-                                    <h2>收藏商品</h2>
-                                    <?php if ($favoriteProductCount > 0): ?>
-                                        <ul>
-                                            <?php foreach ($products as $product): ?>
-                                                <li>
-                                                    <a href="/product/product.php?id=<?= $product["product_id"] ?>"><?= $product["product_name"] ?></a>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php else: ?>
-                                        尚未收藏商品
-                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php else: ?>

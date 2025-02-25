@@ -41,7 +41,7 @@ if (isset($_GET["q"])) {
             break;
     }
 
-    $perPage = 6;
+    $perPage = 7;
     $startItem = ($p - 1) * $perPage;
     $totalPage = ceil($userCount / $perPage);
 
@@ -76,22 +76,27 @@ if (isset($_GET["q"])) {
     <?php include("../css.php") ?>
     <style>
         .list-btn a {
-            background-color: transparent;
             color: #ffc107;
-            border-color: transparent;
+            background-color: transparent;
         }
 
         .list-btn a:hover {
             color: #b8860b;
+            background-color: transparent;
+        }
+
+        .list-btn a:focus {
+            color: rgb(255, 184, 113);
+            background-color: transparent;
         }
 
         .list-btn a:active {
-            color: rgb(219, 161, 16);
+            color: #b8860b;
             background-color: transparent;
         }
 
         .list-btn a.active {
-            color: rgb(219, 161, 16);
+            color: #b8860b;
             background-color: transparent;
         }
 
@@ -103,22 +108,17 @@ if (isset($_GET["q"])) {
 
         .pagination .page-link {
             background-color: #ffc107;
-            /* Bootstrap warning 黃色 */
             color: white;
-            /* 文字顏色 */
-            border-color: #ffc107;
-            /* 邊框顏色 */
+            border-color: #f8f9fa;
         }
 
         .pagination .page-link:hover {
             background-color: #ffca2c;
-            /* 滑鼠懸停時的顏色 */
             border-color: #ffc720;
         }
 
         .pagination .page-link:focus {
             box-shadow: rgb(217, 164, 6);
-            /* 發光效果 */
         }
 
         .pagination .active .page-link {
@@ -129,7 +129,6 @@ if (isset($_GET["q"])) {
 </head>
 
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
@@ -250,14 +249,31 @@ if (isset($_GET["q"])) {
                 <!-- End of Topbar -->
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Page Heading -->
-                    <div class="d-flex justify-content-between mb-2">
-                        <h1 class="h3 mb-0 text-gray-800">會員管理</h1>
-                        <div class="py-2">
-                            <a class="btn btn-warning d-flex align-items-center" href="create-user.php"><i class="fa-solid fa-user-plus fa-fw"></i>Add User</a>
+                    <?php foreach ($rows as $row): ?>
+                        <!-- Modal -->
+                        <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">系統資訊</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        確認刪除使用者?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a role="button" type="button" class="btn btn-danger" href="doUserDelete.php?id=<?= $row["id"] ?>">確認</a>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    <?php endforeach; ?>
+                    <!-- Page Heading -->
+                    <div class="d-flex justify-content-between mb-1">
+                        <h1 class="h3 mb-0 text-gray-800">會員管理</h1>
                     </div>
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div class="d-sm-flex align-items-center justify-content-between">
                         <div class="container-fluid">
                             <div class="py-2 row g-3 align-items-center">
                                 <div class="col-md-6">
@@ -269,122 +285,145 @@ if (isset($_GET["q"])) {
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <form action="" method="get">
-                                        <div class="input-group">
-                                            <input type="search" class="form-control" name="q" <?php $q = "";
-                                                                                                $q = $_GET["q"] ?? ""; ?>
-                                                value="<?= $q ?>">
-                                            <button class="btn btn-warning"><i class="fa-solid fa-magnifying-glass fa-fw" type="submit"></i></button>
+                                    <div class="row g-0">
+                                        <div class="col-3">
+                                            <?php
+                                            $activeGender = isset($_GET["gender"]) ? $_GET["gender"] : "";
+                                            ?>
+                                            <ul class="nav nav-underline">
+                                                <li class="nav-item">
+                                                    <a class="nav-link <?= empty($activeGender) ? "active" : "" ?>" href="users.php">全部</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link <?= ($activeGender == "male") ? "active" : "" ?>" href="users.php?p=1&order=1&category=1">男性</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link <?= ($activeGender == "female") ? "active" : "" ?>" href="users.php?p=1&order=1&category=2">女性</a>
+                                                </li>
+                                            </ul>
                                         </div>
-                                    </form>
+                                        <div class="col-6">
+                                            <form action="" method="get">
+                                                <div class="input-group">
+                                                    <input type="search" class="form-control" name="q" <?php $q = "";
+                                                                                                        $q = $_GET["q"] ?? ""; ?>
+                                                        value="<?= $q ?>">
+                                                    <button class="btn btn-warning"><i class="fa-solid fa-magnifying-glass fa-fw" type="submit"></i></button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-3">
+                                            <div>
+                                                <a class="btn btn-warning d-flex align-items-center w-100" href="create-user.php"><i class="fa-solid fa-user-plus fa-fw"></i>Add User</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <?php if ($userCount > 0): ?>
-                                <table class="table table-bordered table-striped">
+                                <table class="table table-bordered table-striped mb-3">
                                     <thead>
                                         <tr>
                                             <th class="align-middle">
                                                 <div class="row g-0">
-                                                    <div class="d-flex align-items-center col-9">
+                                                    <div class="d-flex align-items-center col-8">
                                                         id
                                                     </div>
-                                                    <div class="col-3 list-btn">
-                                                        <a href="users.php?p=<?= $p ?>&order=2" class="d-flex btn p-0 <?php if ($order == 2) echo "active" ?>"><i class="fa-solid fa-caret-up "></i></a>
-                                                        <a href="users.php?p=<?= $p ?>&order=1" class="d-flex btn p-0 m-0 <?php if ($order == 1) echo "active" ?>"><i class="fa-solid fa-caret-down "></i></a>
+                                                    <div class="col-4 list-btn d-flex flex-column">
+                                                        <a href="users.php?p=<?= $p ?>&order=2" class="d-flex btn p-0 <?php if ($order == 2) echo "active" ?>"><i class="fa-solid fa-caret-up "></i>
+                                                        </a>
+                                                        <a href="users.php?p=<?= $p ?>&order=1" class="d-flex btn p-0 m-0 <?php if ($order == 1) echo "active" ?>"><i class="fa-solid fa-caret-down "></i>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </th>
                                             <th class="align-middle">
                                                 <div class="row g-0">
-                                                    <div class="d-flex align-items-center col-9">
-                                                        name
+                                                    <div class="d-flex align-items-center col-8">
+                                                        使用者名稱
                                                     </div>
-                                                    <div class="col-3 list-btn">
-                                                        <a href="users.php?p=<?= $p ?>&order=4" class="d-flex btn p-0 <?php if ($order == 4) echo "active" ?>"><i class="fa-solid fa-caret-up "></i></a>
-                                                        <a href="users.php?p=<?= $p ?>&order=3" class="d-flex btn p-0 m-0 <?php if ($order == 3) echo "active" ?>"><i class="fa-solid fa-caret-down "></i></a>
-                                                    </div>
-                                                </div>
-                                            </th>
-                                            <th class="align-middle">
-                                                <div class="row g-0">
-                                                    <div class="d-flex align-items-center col-9">
-                                                        gender
+                                                    <div class="col-4 list-btn d-flex flex-column">
+                                                        <a href="users.php?p=<?= $p ?>&order=4" class="d-flex btn p-0 <?php if ($order == 4) echo "active" ?>"><i class="fa-solid fa-caret-up "></i>
+                                                        </a>
+                                                        <a href="users.php?p=<?= $p ?>&order=3" class="d-flex btn p-0 m-0 <?php if ($order == 3) echo "active" ?>"><i class="fa-solid fa-caret-down "></i>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="align-middle">
-                                                <div class="row g-0">
-                                                    <div class="d-flex align-items-center col-9">
-                                                        account
-                                                    </div>
-                                                    <div class="col-3 list-btn">
-                                                        <a href="users.php?p=<?= $p ?>&order=6" class="d-flex btn p-0 <?php if ($order == 6) echo "active" ?>"><i class="fa-solid fa-caret-up "></i></a>
-                                                        <a href="users.php?p=<?= $p ?>&order=5" class="d-flex btn p-0 m-0 <?php if ($order == 5) echo "active" ?>"><i class="fa-solid fa-caret-down "></i></a>
-                                                    </div>
-                                                </div>
-                                            </th>
-                                            <th class="align-middle">phone</th>
-                                            <th class="align-middle">email</th>
+                                            <th class="align-middle text-center">性別</th>
+                                            <th class="align-middle text-center">手機號碼</th>
+                                            <th class="align-middle text-center">電子信箱</th>
+                                            <th class="align-middle text-center">加入時間</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($rows as $row): ?>
                                             <tr>
-                                                <td class="align-middle"><?= $row["id"] ?></td>
-                                                <td class="align-middle"><?= $row["name"] ?></td>
-                                                <td class="align-middle"><?= $row["gender_name"] ?></td>
-                                                <td class="align-middle"><?= $row["account"] ?></td>
+                                                <td class="align-middle text-center"><?= $row["id"] ?></td>
+                                                <td class="align-middle text-center"><?= $row["name"] ?></td>
+                                                <td class="align-middle text-center"><?= $row["gender_name"] ?></td>
                                                 <td class="align-middle"><?= $row["phone"] ?></td>
                                                 <td class="align-middle"><?= $row["email"] ?></td>
-                                                <td class="align-middle">
+                                                <td class="align-middle"><?= $row["created_at"] ?></td>
+                                                <td class="align-middle text-center p-0">
                                                     <a class="btn btn-warning" href="user-edit.php?id=<?= $row["id"] ?>"><i class="fa-solid fa-fw fa-pen"></i></a>
-                                                    <a class="btn btn-warning" href="user-collection.php?id=<?= $row["id"] ?>"><i class="fa-regular fa-eye"></i></a>
+                                                    <a class="btn btn-warning" href="user-view.php?id=<?= $row["id"] ?>"><i class="fa-regular fa-eye"></i></a>
+                                                    <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="fa-solid fa-trash fa-fw"></i></a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
-
                                 <?php if (isset($_GET["p"])): ?>
                                     <div class="d-flex justify-content-center">
                                         <nav aria-label="Page navigation">
-                                            <ul class="pagination my-3">
-                                                <!-- 上一頁 -->
-                                                <li class="page-item <?= ($_GET["p"] > 1) ? '' : 'disabled' ?>">
-                                                    <a class="page-link" href="users.php?p=<?= max(1, $_GET["p"] - 1) ?>&order=<?= $order ?>" aria-label="Previous">
-                                                        <span aria-hidden="true">&laquo;</span>
-                                                    </a>
-                                                </li>
-                                                <!-- 第一頁 -->
-                                                <li class="page-item <?= (1 == $_GET["p"]) ? "active" : "" ?>">
-                                                    <a class="page-link" href="users.php?p=1&order=<?= $order ?>">1</a>
-                                                </li>
-                                                <!-- 省略符號 -->
-                                                <?php if ($_GET["p"] > 4): ?>
-                                                    <li class="page-item disabled"><span class="page-link bg-warning text-white">...</span></li>
+                                            <ul class="pagination">
+                                                <!-- 第一頁（只有當不在第一頁時顯示） -->
+                                                <?php if ($_GET["p"] > 1): ?>
+                                                    <li class="page-item">
+                                                        <a class="page-link fs-5" href="users.php?p=1&order=<?= $order ?>">&lt;&lt;</a>
+                                                    </li>
+                                                <?php endif; ?>
+
+                                                <!-- 上一頁（只有當不在第一頁時顯示） -->
+                                                <?php if ($_GET["p"] > 1): ?>
+                                                    <li class="page-item">
+                                                        <a class="page-link fs-5" href="users.php?p=<?= max(1, $_GET["p"] - 1) ?>&order=<?= $order ?>" aria-label="Previous">&lt;</a>
+                                                    </li>
+                                                <?php endif; ?>
+
+                                                <!-- 動態頁碼顯示 -->
+                                                <?php
+                                                // 顯示的頁碼範圍
+                                                $start = max(1, $_GET["p"] - 2); // 確保頁碼不小於 1
+                                                $end = min($totalPage, $_GET["p"] + 2); // 確保頁碼不大於總頁數
+                                                for ($i = $start; $i <= $end; $i++): ?>
+                                                    <li class="page-item <?= ($i == $_GET["p"]) ? "active" : "" ?>">
+                                                        <a class="page-link fs-5" href="users.php?p=<?= $i ?>&order=<?= $order ?>"><?= $i ?></a>
+                                                    </li>
+                                                <?php endfor; ?>
+
+                                                <!-- 下一頁（只有當不在最後一頁時顯示） -->
+                                                <?php if ($_GET["p"] < $totalPage): ?>
+                                                    <li class="page-item">
+                                                        <a class="page-link fs-5" href="users.php?p=<?= min($totalPage, $_GET["p"] + 1) ?>&order=<?= $order ?>" aria-label="Next">&gt;</a>
+                                                    </li>
+                                                <?php endif; ?>
+
+                                                <!-- 最後一頁（只有當不在最後一頁時顯示） -->
+                                                <?php if ($_GET["p"] < $totalPage): ?>
+                                                    <li class="page-item">
+                                                        <a class="page-link fs-5" href="users.php?p=<?= $totalPage ?>&order=<?= $order ?>">&gt;&gt;</a>
+                                                    </li>
                                                 <?php endif; ?>
                                                 <!-- 搜尋框（輸入頁碼跳轉） -->
-                                                <li class="page-item mx-3">
+                                                <li class="page-item ms-3">
                                                     <form action="users.php" method="GET" class="d-flex">
                                                         <input type="hidden" name="order" value="<?= $order ?>">
-                                                        <input type="number" name="p" class="form-control rounded-0 p-0 text-warning fw-bold" min="1" max="<?= $totalPage ?>" value="<?= $_GET["p"] ?>" style="width: 70px; text-align: center;">
-                                                        <button type="submit" class="btn bg-white text-warning btn-sm rounded-0 fw-bold fs-6">Go</button>
+                                                        <input type="number" name="p" class="form-control rounded-0 p-0 text-warning fw-bold fs-5" min="1" max="<?= $totalPage ?>" value="<?= $_GET["p"] ?>" style="width: 70px; text-align: center;">
+                                                        <button type="submit" class="btn bg-light text-warning btn-sm rounded-0 fw-bold fs-5">Go</button>
                                                     </form>
-                                                </li>
-                                                <!-- 省略符號 -->
-                                                <?php if ($_GET["p"] < $totalPage - 3): ?>
-                                                    <li class="page-item disabled"><span class="page-link bg-warning text-white">...</span></li>
-                                                <?php endif; ?>
-                                                <!-- 最後一頁 -->
-                                                <li class="page-item <?= ($totalPage == $_GET["p"]) ? "active" : "" ?>">
-                                                    <a class="page-link" href="users.php?p=<?= $totalPage ?>&order=<?= $order ?>"><?= $totalPage ?></a>
-                                                </li>
-                                                <!-- 下一頁 -->
-                                                <li class="page-item <?= ($_GET["p"] < $totalPage) ? '' : 'disabled' ?>">
-                                                    <a class="page-link" href="users.php?p=<?= min($totalPage, $_GET["p"] + 1) ?>&order=<?= $order ?>" aria-label="Next">
-                                                        <span aria-hidden="true">&raquo;</span>
-                                                    </a>
                                                 </li>
                                             </ul>
                                         </nav>
